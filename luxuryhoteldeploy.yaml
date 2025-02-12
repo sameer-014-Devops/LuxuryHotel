@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skmirza-luxuryhotel-deploy
+  labels:
+    app: skmirza-luxuryhotel-deploy-lb01
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: skmirza-luxuryhotel-app
+  template:
+    metadata:
+      labels:
+        app: skmirza-luxuryhotel-app
+    spec:
+      containers:
+      - name: skmirza-luxuryhotel-container
+        image: sameer014/skmirza-luxuryhotel-img:latest
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        ports:
+        - containerPort: 8091
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: skmirza-luxuryhotel-np-service
+  labels:
+    app: skmirza-luxuryhotel-np-app
+spec:
+  selector:
+    app: skmirza-luxuryhotel-app
+
+  type: NodePort
+  ports:
+  - nodePort: 30024
+    port: 8091
+    targetPort: 8091
